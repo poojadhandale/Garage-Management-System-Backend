@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .header { text-align: center; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th, td { border: 1px solid #ccc; padding: 8px; font-size: 14px; }
+        th { background: #f3f3f3; }
+        .right { text-align: right; }
+        .title { font-size: 22px; font-weight: bold; margin-bottom: 10px; }
+    </style>
+</head>
+
+<body>
+
+<div class="header">
+    <div class="title">GST TAX INVOICE</div>
+    <p>Garage Management System</p>
+</div>
+
+<h3>Customer Details</h3>
+<p>
+    <strong>Name:</strong> <span th:text="${customer.customerName}"></span><br/>
+    <strong>Vehicle:</strong> <span th:text="${customer.vehicleNo}"></span><br/>
+    <strong>Email:</strong> <span th:text="${customer.email}"></span><br/>
+    <strong>Phone:</strong> <span th:text="${customer.phone}"></span>
+</p>
+
+<h3>Service Items</h3>
+<table>
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Item</th>
+        <th>Qty</th>
+        <th>Price</th>
+        <th>Total</th>
+    </tr>
+    </thead>
+
+    <tbody>
+    <tr th:each="item, i : ${items}">
+        <td th:text="${i.index + 1}"></td>
+        <td th:text="${item.itemName}"></td>
+        <td th:text="${item.quantityUsed}"></td>
+        <td th:text="${item.price}"></td>
+        <td th:text="${item.quantityUsed * item.price}"></td>
+    </tr>
+    </tbody>
+</table>
+
+<h3>Billing Summary</h3>
+<table>
+    <tr>
+        <td>Subtotal</td>
+        <td class="right" th:text="${total}"></td>
+    </tr>
+    <tr>
+        <td>GST (18%)</td>
+        <td class="right" th:text="${gstAmount}"></td>
+    </tr>
+    <tr>
+        <th>Grand Total</th>
+        <th class="right" th:text="${grandTotal}"></th>
+    </tr>
+</table>
+
+</body>
+</html>
