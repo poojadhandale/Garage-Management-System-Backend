@@ -58,12 +58,12 @@ public interface ServiceRecordRepository extends JpaRepository<ServiceRecord, Lo
     @Query("SELECT s FROM ServiceRecord s WHERE s.id = :id")
     ServiceRecordDTO  findDTOById(@Param("id") Long id);
 
-    @Query("""
-    SELECT sr FROM ServiceRecord sr
-    LEFT JOIN FETCH sr.items 
-    WHERE sr.id = :id
-""")
-    ServiceRecord getRecordWithItems(@Param("id") Long id);
+//    @Query("""
+//    SELECT sr FROM ServiceRecord sr
+//    LEFT JOIN FETCH sr.items
+//    WHERE sr.id = :id
+//""")
+//    ServiceRecord getRecordWithItems(@Param("id") Long id);
 
 }
 

@@ -16,5 +16,6 @@ public class ServiceRecordDTO {
     private Double totalCost;
     private String remarks;
     private List<ServiceItemDTO> stocks;
+    private List<LabourDTO> labourCharges;
 }
 

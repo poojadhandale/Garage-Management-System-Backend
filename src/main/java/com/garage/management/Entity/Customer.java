@@ -4,10 +4,11 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
 @Table(name = "customers")
 public class Customer {
 
@@ -24,6 +25,12 @@ public class Customer {
     @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String vehicleNo;
+
+    @Column(nullable = false)
+    private String address;
+
+    @Column(nullable = false)
+    private String vehicleModel;
 }

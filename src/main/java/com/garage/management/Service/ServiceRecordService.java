@@ -1,12 +1,10 @@
 package com.garage.management.Service;
 
 import com.garage.management.DTO.CustomerDTO;
+import com.garage.management.DTO.LabourDTO;
 import com.garage.management.DTO.ServiceItemDTO;
 import com.garage.management.DTO.ServiceRecordDTO;
-import com.garage.management.Entity.Customer;
-import com.garage.management.Entity.ServiceItem;
-import com.garage.management.Entity.ServiceRecord;
-import com.garage.management.Entity.Stock;
+import com.garage.management.Entity.*;
 import com.garage.management.Repository.CustomerRepository;
 import com.garage.management.Repository.ServiceItemRepository;
 import com.garage.management.Repository.ServiceRecordRepository;
@@ -38,38 +36,50 @@ public class ServiceRecordService {
 
         List<ServiceRecord> records = recordRepo.findAll();
 
-        return records.stream().map(record -> {
+        return records.stream().map(serviceRecord -> {
 
             ServiceRecordDTO dto = new ServiceRecordDTO();
-            dto.setId(record.getId());
-            dto.setServiceDate(record.getServiceDate());
-            dto.setRemarks(record.getRemarks());
-            dto.setTotalCost(record.getTotalCost());
+            dto.setId(serviceRecord.getId());
+            dto.setServiceDate(serviceRecord.getServiceDate());
+            dto.setRemarks(serviceRecord.getRemarks());
+            dto.setTotalCost(serviceRecord.getTotalCost());
 
             // Customer
             CustomerDTO customerDTO = new CustomerDTO();
-            customerDTO.setId(record.getCustomer().getId());
-            customerDTO.setCustomerName(record.getCustomer().getCustomerName());
-            customerDTO.setEmail(record.getCustomer().getEmail());
-            customerDTO.setPhone(record.getCustomer().getPhone());
-            customerDTO.setVehicleNo(record.getCustomer().getVehicleNo());
+            customerDTO.setId(serviceRecord.getCustomer().getId());
+            customerDTO.setCustomerName(serviceRecord.getCustomer().getCustomerName());
+            customerDTO.setEmail(serviceRecord.getCustomer().getEmail());
+            customerDTO.setPhone(serviceRecord.getCustomer().getPhone());
+            customerDTO.setVehicleNo(serviceRecord.getCustomer().getVehicleNo());
             dto.setCustomer(customerDTO);
 
             // Stock Items
-            List<ServiceItemDTO> items = record.getItemsUsed().stream().map(item -> {
+            List<ServiceItemDTO> items = new ArrayList<>();
+            for (ServiceItem serviceItem : serviceRecord.getItemsUsed()) {
 
                 ServiceItemDTO itemDTO = new ServiceItemDTO();
-                itemDTO.setId(item.getId());
-                itemDTO.setStockId(item.getStock().getId());
-                itemDTO.setItemName(item.getStock().getItemName());
-                itemDTO.setQuantityUsed(item.getQuantityUsed());
-                itemDTO.setPrice(item.getStock().getPrice());
+                itemDTO.setId(serviceItem.getId());
+                itemDTO.setStockId(serviceItem.getStock().getId());
+                itemDTO.setItemName(serviceItem.getStock().getItemName());
+                itemDTO.setQuantityUsed(serviceItem.getQuantityUsed());
+                itemDTO.setPrice(serviceItem.getStock().getPrice());
 
-                return itemDTO;
-
-            }).collect(Collectors.toList());
-
+                items.add(itemDTO);
+            }
             dto.setStocks(items);
+
+            // Labour Items
+            List<LabourDTO> labourChargeList = new ArrayList<>();
+            for (Labour labour : serviceRecord.getLabour()) {
+
+                LabourDTO labourDTO = new LabourDTO();
+                labourDTO.setId(labourDTO.getId());
+                labourDTO.setDescription(labour.getLabourDescription());
+                labourDTO.setPrice(labour.getAmount());
+                labourChargeList.add(labourDTO);
+            }
+
+            dto.setLabourCharges(labourChargeList);
 
             return dto;
 
