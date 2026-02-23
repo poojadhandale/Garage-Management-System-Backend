@@ -8,6 +8,7 @@ import java.util.List;
 
 public interface StockRepository extends JpaRepository<Stock, Long> {
     long countByQuantityLessThan(int qty);
+
     List<Stock> findTop5ByOrderByIdDesc();
 
 }

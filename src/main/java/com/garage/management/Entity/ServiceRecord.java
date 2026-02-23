@@ -1,5 +1,7 @@
 package com.garage.management.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -7,7 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,9 +23,6 @@ public class ServiceRecord {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
 
     private LocalDate serviceDate;
 
@@ -32,10 +30,27 @@ public class ServiceRecord {
 
     private String remarks;
 
-    @OneToMany(mappedBy = "serviceRecord", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ServiceItem> itemsUsed = new ArrayList<>();
+    private boolean insuranceClaim;
 
-    @OneToMany(mappedBy = "serviceRecord", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Labour> labour = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "customer_id")
+    @JsonIgnoreProperties({"vehicles", "hibernateLazyInitializer", "handler"})
+    private Customer customer;
+
+    @OneToMany(mappedBy = "serviceRecord", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<ServiceItem> itemsUsed;
+
+    @OneToMany(mappedBy = "serviceRecord", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Labour> labour;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "vehicle_id", nullable = false)
+    @JsonIgnoreProperties({"customer", "hibernateLazyInitializer", "handler"})
+    private Vehicle vehicle;
+
+    @Transient
+    private Long vehicleId;
 
 }

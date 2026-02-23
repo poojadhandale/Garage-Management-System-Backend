@@ -2,8 +2,11 @@ package com.garage.management.Service;
 
 import com.garage.management.Entity.Stock;
 import com.garage.management.Repository.StockRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import java.util.List;
 
 @Service
 public class StockService {
@@ -14,8 +17,9 @@ public class StockService {
         this.stockRepository = stockRepository;
     }
 
-    public List<Stock> getAllStocks() {
-        return stockRepository.findAll();
+    public Page<Stock> getAllStocks(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").ascending());
+        return stockRepository.findAll(pageable);
     }
 
     public Stock updateStock(Long id, Stock updatedStock) {

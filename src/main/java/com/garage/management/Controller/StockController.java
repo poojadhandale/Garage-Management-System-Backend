@@ -3,11 +3,10 @@ package com.garage.management.Controller;
 import com.garage.management.Entity.Stock;
 import com.garage.management.Security.ApiResponse;
 import com.garage.management.Service.StockService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/stocks")
@@ -21,12 +20,15 @@ public class StockController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Stock>>> getAllStocks() {
-        List<Stock> stocks = stockService.getAllStocks();
-        ApiResponse<List<Stock>> response = new ApiResponse<>(
+    public ResponseEntity<ApiResponse<Page<Stock>>> getAllStocks(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        Page<Stock> stocksPage = stockService.getAllStocks(page, size);
+        ApiResponse<Page<Stock>> response = new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "Stocks fetched successfully",
-                stocks
+                stocksPage
         );
         return ResponseEntity.ok(response);
     }

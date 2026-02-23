@@ -1,7 +1,11 @@
 package com.garage.management.Entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
@@ -25,12 +29,15 @@ public class Customer {
     @Column(nullable = false)
     private String phone;
 
-    @Column(nullable = false, unique = true)
-    private String vehicleNo;
+    @OneToMany(
+            mappedBy = "customer",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
+    )
+    @JsonIgnoreProperties("customer")
+    private List<Vehicle> vehicles;
 
     @Column(nullable = false)
     private String address;
 
-    @Column(nullable = false)
-    private String vehicleModel;
 }

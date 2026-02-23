@@ -13,13 +13,13 @@ import java.util.List;
 public interface ServiceItemRepository extends JpaRepository<ServiceItem, Long> {
 
     @Query(value = """
-        SELECT st.item_name AS itemName,
-        SUM(si.quantity_used) AS used
-        FROM service_items si
-        JOIN stocks st ON si.stock_id = st.id
-        GROUP BY st.item_name
-        ORDER BY used DESC
-    """, nativeQuery = true)
+                SELECT st.item_name AS itemName,
+                SUM(si.quantity_used) AS used
+                FROM service_items si
+                JOIN stocks st ON si.stock_id = st.id
+                GROUP BY st.item_name
+                ORDER BY used DESC
+            """, nativeQuery = true)
     List<Object[]> getStockUsageCounts();
 
     @Modifying

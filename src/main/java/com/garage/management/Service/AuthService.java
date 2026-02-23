@@ -1,10 +1,11 @@
 package com.garage.management.Service;
 
-import com.garage.management.Security.JwtUtil;
 import com.garage.management.Entity.User;
 import com.garage.management.Repository.UserRepository;
+import com.garage.management.Security.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 
 @Service

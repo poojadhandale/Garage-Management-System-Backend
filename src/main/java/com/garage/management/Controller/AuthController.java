@@ -1,10 +1,10 @@
 package com.garage.management.Controller;
 
 
-import com.garage.management.Service.AuthService;
+import com.garage.management.Entity.User;
 import com.garage.management.Security.AuthRequest;
 import com.garage.management.Security.AuthResponse;
-import com.garage.management.Entity.User;
+import com.garage.management.Service.AuthService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthService authService;
+
     public AuthController(AuthService authService) {
         this.authService = authService;
     }

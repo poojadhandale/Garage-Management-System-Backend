@@ -1,15 +1,13 @@
 package com.garage.management.Controller;
 
-import com.garage.management.DTO.ServiceRecordDTO;
 import com.garage.management.Entity.ServiceRecord;
 import com.garage.management.Security.ApiResponse;
 import com.garage.management.Service.ServiceRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/services")
@@ -17,22 +15,26 @@ import java.util.List;
 public class ServiceController {
 
     @Autowired
-    private ServiceRecordService service;
+    private ServiceRecordService serviceRecordService;
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<ServiceRecordDTO>>> getAll() {
-        List<ServiceRecordDTO> servicingRecord = service.getAllServices();
-        ApiResponse<List<ServiceRecordDTO>> response = new ApiResponse<>(
+    public ResponseEntity<ApiResponse<Page<ServiceRecord>>> getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+
+        Page<ServiceRecord> records = serviceRecordService.getAllServices(page, size);
+        ApiResponse<Page<ServiceRecord>> response = new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "Servicing Records Fetched Successfully",
-                servicingRecord
+                records
         );
         return ResponseEntity.ok(response);
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ServiceRecord>> addService(@RequestBody ServiceRecordDTO records) {
-        ServiceRecord saved = service.addService(records);
+    public ResponseEntity<ApiResponse<ServiceRecord>> addService(@RequestBody ServiceRecord serviceRecord) {
+        ServiceRecord saved = serviceRecordService.addService(serviceRecord);
         ApiResponse<ServiceRecord> response = new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "Servicing record added Successfully", saved
@@ -41,24 +43,33 @@ public class ServiceController {
         return ResponseEntity.ok(response);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ServiceRecordDTO>> updateService(@PathVariable Long id, @RequestBody ServiceRecordDTO dto) {
+    @PutMapping("/{serviceId}")
+    public ResponseEntity<ApiResponse<ServiceRecord>> updateService(
+            @PathVariable Long serviceId,
+            @RequestBody ServiceRecord serviceRecord) {
 
-        ServiceRecordDTO saved = service.updateService(id, dto);
-        ApiResponse<ServiceRecordDTO> response = new ApiResponse<>(
+        ServiceRecord updated = serviceRecordService.updateService(serviceId, serviceRecord);
+
+        ApiResponse<ServiceRecord> response = new ApiResponse<>(
                 HttpStatus.OK.value(),
-                "Servicing record added Successfully", saved
+                "Servicing record updated successfully",
+                updated
         );
+
         return ResponseEntity.ok(response);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id) {
-        service.deleteService(id);
-        return ResponseEntity.ok("Deleted");
+    @DeleteMapping("/{serviceId}")
+    public ResponseEntity<ApiResponse<Void>> deleteService(@PathVariable Long serviceId) {
+
+        serviceRecordService.deleteService(serviceId);
+
+        ApiResponse<Void> response = new ApiResponse<>(
+                HttpStatus.OK.value(),
+                "Servicing record deleted successfully",
+                null
+        );
+
+        return ResponseEntity.ok(response);
     }
-
-
-
-
 }

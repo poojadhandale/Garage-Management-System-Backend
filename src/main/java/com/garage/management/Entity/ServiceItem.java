@@ -1,6 +1,6 @@
 package com.garage.management.Entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,13 +20,17 @@ public class ServiceItem {
     private Long id;
 
     @ManyToOne
-    @JsonIgnore  // IMPORTANT: Avoid circular JSON
-    @JoinColumn(name = "service_id")
+    @JoinColumn(name = "service_record_id")
+    @JsonBackReference
     private ServiceRecord serviceRecord;
 
     @ManyToOne
     @JoinColumn(name = "stock_id")
     private Stock stock;
 
-    private Integer quantityUsed;
+    private int quantityUsed;
+
+    @Transient
+    private Long stockId;
+
 }

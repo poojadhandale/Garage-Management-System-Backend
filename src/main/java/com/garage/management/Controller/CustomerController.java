@@ -4,12 +4,10 @@ package com.garage.management.Controller;
 import com.garage.management.Entity.Customer;
 import com.garage.management.Security.ApiResponse;
 import com.garage.management.Service.CustomerService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/customers")
@@ -23,13 +21,17 @@ public class CustomerController {
     }
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<Customer>>> getAllCustomers() {
-        List<Customer> customers = customerService.getAllCustomers();
+    public ResponseEntity<ApiResponse<Page<Customer>>> getAllCustomers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
 
-        ApiResponse<List<Customer>> response = new ApiResponse<>(
+        Page<Customer> customerPage = customerService.getAllCustomers(page, size);
+
+        ApiResponse<Page<Customer>> response = new ApiResponse<>(
                 HttpStatus.OK.value(),
                 "Customers fetched successfully",
-                customers
+                customerPage
         );
 
         return ResponseEntity.ok(response);
