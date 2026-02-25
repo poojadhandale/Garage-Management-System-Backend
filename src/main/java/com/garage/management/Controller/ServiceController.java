@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 
 @RestController
 @RequestMapping("/api/services")
@@ -71,5 +73,15 @@ public class ServiceController {
         );
 
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{serviceId}/bill")
+    public ResponseEntity<byte[]> generateBill(@PathVariable Long serviceId) {
+        byte[] billPdf = serviceRecordService.generateBillPdf(serviceId);
+
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=service-bill-" + serviceId + ".pdf")
+                .contentType(MediaType.APPLICATION_PDF)
+                .body(billPdf);
     }
 }

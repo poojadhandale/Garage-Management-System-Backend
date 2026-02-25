@@ -37,11 +37,11 @@ public class ServiceRecord {
     @JsonIgnoreProperties({"vehicles", "hibernateLazyInitializer", "handler"})
     private Customer customer;
 
-    @OneToMany(mappedBy = "serviceRecord", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "serviceRecord", cascade = CascadeType.ALL,orphanRemoval = true)
     @JsonManagedReference
     private List<ServiceItem> itemsUsed;
 
-    @OneToMany(mappedBy = "serviceRecord", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "serviceRecord", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<Labour> labour;
 

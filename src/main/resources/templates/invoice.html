@@ -20,10 +20,17 @@
     <p>Garage Management System</p>
 </div>
 
+<p>
+    <strong>Invoice Date:</strong> <span th:text="${record.serviceDate}"></span><br/>
+    <strong>Service ID:</strong> <span th:text="${record.id}"></span>
+</p>
+
 <h3>Customer Details</h3>
 <p>
     <strong>Name:</strong> <span th:text="${customer.customerName}"></span><br/>
     <strong>Vehicle:</strong> <span th:text="${customer.vehicleNo}"></span><br/>
+    <strong>Vehicle:</strong> <span th:text="${vehicle.vehicleNo}"></span><br/>
+    <strong>Model:</strong> <span th:text="${vehicle.model}"></span><br/>
     <strong>Email:</strong> <span th:text="${customer.email}"></span><br/>
     <strong>Phone:</strong> <span th:text="${customer.phone}"></span>
 </p>
@@ -54,8 +61,17 @@
 <h3>Billing Summary</h3>
 <table>
     <tr>
+        <td>Parts Total</td>
+        <td class="right" th:text="${partsTotal}"></td>
+    </tr>
+    <tr>
+        <td>Labour Total</td>
+        <td class="right" th:text="${labourTotal}"></td>
+    </tr>
+    <tr>
         <td>Subtotal</td>
         <td class="right" th:text="${total}"></td>
+        <td class="right" th:text="${subtotal}"></td>
     </tr>
     <tr>
         <td>GST (18%)</td>
@@ -65,6 +81,27 @@
         <th>Grand Total</th>
         <th class="right" th:text="${grandTotal}"></th>
     </tr>
+</table>
+
+<h3>Labour Charges</h3>
+<table>
+    <thead>
+    <tr>
+        <th>#</th>
+        <th>Description</th>
+        <th>Total</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${#lists.isEmpty(labour)}">
+        <td colspan="3">No labour charges</td>
+    </tr>
+    <tr th:each="entry, i : ${labour}">
+        <td th:text="${i.index + 1}"></td>
+        <td th:text="${entry.description}"></td>
+        <td class="right" th:text="${entry.amount}"></td>
+    </tr>
+    </tbody>
 </table>
 
 </body>
