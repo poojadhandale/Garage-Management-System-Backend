@@ -54,8 +54,12 @@ public class CustomerService {
             );
         }
 
+        List<Vehicle> incomingVehicles = Optional.ofNullable(customer.getVehicles())
+                .orElse(Collections.emptyList());
+
+
         // Extract vehicle numbers
-        List<String> vehicleNos = customer.getVehicles()
+        List<String> vehicleNos = incomingVehicles
                 .stream()
                 .map(Vehicle::getVehicleNo)
                 .toList();
@@ -70,7 +74,7 @@ public class CustomerService {
             );
         }
 
-        customer.getVehicles().forEach(v -> v.setCustomer(customer));
+        incomingVehicles.forEach(v -> v.setCustomer(customer));
 
         return customerRepository.save(customer);
     }
@@ -103,15 +107,22 @@ public class CustomerService {
         existingCustomer.setCustomerName(updatedCustomer.getCustomerName());
         existingCustomer.setEmail(updatedCustomer.getEmail());
         existingCustomer.setPhone(updatedCustomer.getPhone());
+        existingCustomer.setAddress(updatedCustomer.getAddress());
 
         List<Vehicle> incomingVehicles =
                 Optional.ofNullable(updatedCustomer.getVehicles())
                         .orElse(Collections.emptyList());
 
-        Map<String, Vehicle> existingVehicleMap =
+        Map<Long, Vehicle> existingVehicleMapById =
                 existingCustomer.getVehicles()
                         .stream()
-                        .collect(Collectors.toMap(Vehicle::getVehicleNo, v -> v));
+                        .filter(v -> v.getId() != null)
+                        .collect(Collectors.toMap(Vehicle::getId, v -> v));
+
+        Map<String, Vehicle> existingVehicleMapByNo =
+                existingCustomer.getVehicles()
+                        .stream()
+                        .collect(Collectors.toMap(Vehicle::getVehicleNo, v -> v, (first, second) -> first));
 
         List<String> incomingVehicleNos =
                 incomingVehicles.stream()
@@ -137,20 +148,38 @@ public class CustomerService {
         List<Vehicle> updatedVehicleList = new ArrayList<>();
 
         for (Vehicle incoming : incomingVehicles) {
+            Vehicle existingVehicle = null;
 
-            Vehicle existingVehicle = existingVehicleMap.get(incoming.getVehicleNo());
+            if (incoming.getId() != null) {
+                existingVehicle = existingVehicleMapById.get(incoming.getId());
+            }
 
+            if (existingVehicle == null) {
+                existingVehicle = existingVehicleMapByNo.get(incoming.getVehicleNo());
+            }
             if (existingVehicle != null) {
+                existingVehicle.setVehicleNo(incoming.getVehicleNo());
                 existingVehicle.setModel(incoming.getModel());
                 updatedVehicleList.add(existingVehicle);
             } else {
                 incoming.setCustomer(existingCustomer);
                 updatedVehicleList.add(incoming);
+                Vehicle newVehicle = Vehicle.builder()
+                        .vehicleNo(incoming.getVehicleNo())
+                        .model(incoming.getModel())
+                        .customer(existingCustomer)
+                        .build();
+                updatedVehicleList.add(newVehicle);
             }
         }
 
-        existingCustomer.getVehicles().clear();
-        existingCustomer.getVehicles().addAll(updatedVehicleList);
+        existingCustomer.getVehicles().removeIf(vehicle -> !updatedVehicleList.contains(vehicle));
+        updatedVehicleList.stream()
+                .filter(vehicle -> !existingCustomer.getVehicles().contains(vehicle))
+                .forEach(vehicle -> {
+                    vehicle.setCustomer(existingCustomer);
+                    existingCustomer.getVehicles().add(vehicle);
+                });
 
         return customerRepository.save(existingCustomer);
     }

@@ -28,7 +28,6 @@
 <h3>Customer Details</h3>
 <p>
     <strong>Name:</strong> <span th:text="${customer.customerName}"></span><br/>
-    <strong>Vehicle:</strong> <span th:text="${customer.vehicleNo}"></span><br/>
     <strong>Vehicle:</strong> <span th:text="${vehicle.vehicleNo}"></span><br/>
     <strong>Model:</strong> <span th:text="${vehicle.model}"></span><br/>
     <strong>Email:</strong> <span th:text="${customer.email}"></span><br/>
@@ -70,7 +69,6 @@
     </tr>
     <tr>
         <td>Subtotal</td>
-        <td class="right" th:text="${total}"></td>
         <td class="right" th:text="${subtotal}"></td>
     </tr>
     <tr>

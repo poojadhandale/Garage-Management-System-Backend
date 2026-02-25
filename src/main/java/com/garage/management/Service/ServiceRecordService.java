@@ -184,10 +184,14 @@ public class ServiceRecordService {
 
     @Transactional(readOnly = true)
     public byte[] generateBillPdf(Long serviceId) {
-        ServiceRecord serviceRecord = serviceRecordRepo.findById(serviceId)
+        ServiceRecord serviceRecord = serviceRecordRepo.findBillDataById(serviceId)
                 .orElseThrow(() ->
                         new RuntimeException("Servicing record not found with id: " + serviceId)
                 );
+
+        if (serviceRecord.getLabour() != null) {
+            serviceRecord.getLabour().size();
+        }
 
         Map<String, Object> customerInfo = new HashMap<>();
         if (serviceRecord.getCustomer() != null) {

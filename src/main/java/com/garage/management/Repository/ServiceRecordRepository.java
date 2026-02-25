@@ -1,14 +1,21 @@
 package com.garage.management.Repository;
 
 import com.garage.management.Entity.ServiceRecord;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ServiceRecordRepository extends JpaRepository<ServiceRecord, Long> {
+
+
+    @EntityGraph(attributePaths = {"customer", "vehicle", "itemsUsed", "itemsUsed.stock"})
+    @Query("SELECT sr FROM ServiceRecord sr WHERE sr.id = :id")
+    Optional<ServiceRecord> findBillDataById(Long id);
 
     @Query(value = """
                 SELECT DATE_FORMAT(service_date, '%b') AS month,
@@ -37,30 +44,6 @@ public interface ServiceRecordRepository extends JpaRepository<ServiceRecord, Lo
                 AND YEAR(service_date) = YEAR(CURRENT_DATE)
             """, nativeQuery = true)
     Double getCurrentMonthRevenue();
-
-//    @Query(value = """
-//        SELECT
-//            c.customer_name AS customerName,
-//            c.vehicle_no AS vehicleNo,
-//            s.service_date AS date,
-//            s.total_cost AS totalCost
-//        FROM service_records s
-//        JOIN customers c ON s.customer_id = c.id
-//        ORDER BY s.service_date DESC
-//        LIMIT :limit
-//    """, nativeQuery = true)
-//    List<RecentServiceDTO> getRecentServices(int limit);
-//
-//
-//    @Query("SELECT s FROM ServiceRecord s WHERE s.id = :id")
-//    ServiceRecord findDTOById(@Param("id") Long id);
-//
-////    @Query("""
-////    SELECT sr FROM ServiceRecord sr
-////    LEFT JOIN FETCH sr.items
-////    WHERE sr.id = :id
-////""")
-////    ServiceRecord getRecordWithItems(@Param("id") Long id);
 
 }
 
