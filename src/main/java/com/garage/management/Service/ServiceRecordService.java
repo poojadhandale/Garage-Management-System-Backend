@@ -4,6 +4,7 @@ package com.garage.management.Service;
 import com.garage.management.Entity.ServiceRecord;
 import com.garage.management.Entity.Stock;
 import com.garage.management.Entity.Vehicle;
+import com.garage.management.Repository.InsuranceCompanyRepository;
 import com.garage.management.Repository.ServiceRecordRepository;
 import com.garage.management.Repository.StockRepository;
 import com.garage.management.Repository.VehicleRepository;
@@ -29,11 +30,13 @@ public class ServiceRecordService {
     private final VehicleRepository vehicleRepo;
     private final StockRepository stockRepo;
     private final TemplateEngine templateEngine;
+    private final InsuranceCompanyRepository insuranceCompanyRepo;
 
-    public ServiceRecordService(ServiceRecordRepository serviceRecordRepo, VehicleRepository vehicleRepo,StockRepository stockRepo,TemplateEngine templateEngine) {
+    public ServiceRecordService(ServiceRecordRepository serviceRecordRepo, InsuranceCompanyRepository insuranceCompanyRepo, VehicleRepository vehicleRepo, StockRepository stockRepo, TemplateEngine templateEngine) {
         this.serviceRecordRepo = serviceRecordRepo;
         this.stockRepo = stockRepo;
         this.vehicleRepo = vehicleRepo;
+        this.insuranceCompanyRepo = insuranceCompanyRepo;
         this.templateEngine = templateEngine;
     }
 
@@ -60,6 +63,8 @@ public class ServiceRecordService {
 
         serviceRecord.setVehicle(vehicle);
         serviceRecord.setCustomer(vehicle.getCustomer());
+        serviceRecord.setInsuranceClaim(serviceRecord.isInsuranceClaim());
+        serviceRecord.setInsuranceCompanyId(serviceRecord.getInsuranceCompanyId());
 
         // 2️⃣ Items Used
         if (serviceRecord.getItemsUsed() != null) {
@@ -140,6 +145,8 @@ public class ServiceRecordService {
         existing.setServiceDate(request.getServiceDate());
         existing.setRemarks(request.getRemarks());
         existing.setTotalCost(request.getTotalCost());
+        existing.setInsuranceClaim(request.isInsuranceClaim());
+        existing.setInsuranceCompanyId(request.getInsuranceCompanyId());
 
         // 4️⃣ Handle Items Used
         if (existing.getItemsUsed() == null) {

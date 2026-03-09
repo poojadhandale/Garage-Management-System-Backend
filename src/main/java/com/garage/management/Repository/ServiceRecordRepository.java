@@ -4,6 +4,7 @@ import com.garage.management.Entity.ServiceRecord;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -45,5 +46,19 @@ public interface ServiceRecordRepository extends JpaRepository<ServiceRecord, Lo
             """, nativeQuery = true)
     Double getCurrentMonthRevenue();
 
+    @Query(value = """
+            SELECT sr.id,
+                   c.name AS customer_name,
+                   v.vehicle_number,
+                   sr.service_date,
+                   sr.total_cost,
+                   sr.remarks
+            FROM service_records sr
+            LEFT JOIN customers c ON sr.customer_id = c.id
+            LEFT JOIN vehicles v ON sr.vehicle_id = v.id
+            ORDER BY sr.service_date DESC, sr.id DESC
+            LIMIT :limit
+            """, nativeQuery = true)
+    List<Object[]> getRecentServices(@Param("limit") int limit);
 }
 

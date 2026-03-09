@@ -33,6 +33,11 @@ public class ServiceRecord {
     private boolean insuranceClaim;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "insurance_company_id")
+    @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+    private InsuranceCompany insuranceCompany;
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "customer_id")
     @JsonIgnoreProperties({"vehicles", "hibernateLazyInitializer", "handler"})
     private Customer customer;
@@ -52,5 +57,8 @@ public class ServiceRecord {
 
     @Transient
     private Long vehicleId;
+
+    @Transient
+    private Long insuranceCompanyId;
 
 }
